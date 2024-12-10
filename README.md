@@ -103,8 +103,17 @@ def handle_tool_call(message):
     return response, city
 ```
 
+# Our Agent Framework
+
+The term **Agentic AI** and Agentization is an umbrella term that refers to a number of techniques, such as:
+
+1. Breaking a complex problem into smaller steps, with multiple LLMs carrying out specialized tasks
+2. The ability for LLMs to use Tools to give them additional capabilities
+3. The `Agent Environment` which allows Agents to collaborate
+4. An LLM can act as the Planner, dividing bigger tasks into smaller ones for the specialists
+5. The concept of an Agent having autonomy / agency, beyond just responding to a prompt - such as Memory
+
 ```
-# More involved Gradio code as we're not using the preset Chat interface!
 # Passing in inbrowser=True in the last line will cause a Gradio window to pop up immediately.
 
 with gr.Blocks(js=force_dark_mode) as ui:
@@ -127,16 +136,6 @@ with gr.Blocks(js=force_dark_mode) as ui:
 
 ui.launch(inbrowser=True)
 ```
-
-# Our Agent Framework
-
-The term **Agentic AI** and Agentization is an umbrella term that refers to a number of techniques, such as:
-
-1. Breaking a complex problem into smaller steps, with multiple LLMs carrying out specialized tasks
-2. The ability for LLMs to use Tools to give them additional capabilities
-3. The `Agent Environment` which allows Agents to collaborate
-4. An LLM can act as the Planner, dividing bigger tasks into smaller ones for the specialists
-5. The concept of an Agent having autonomy / agency, beyond just responding to a prompt - such as Memory
     
 ![Result](https://github.com/MihranD/Airline-AI-Assistant/blob/main/images/result.png)
 
