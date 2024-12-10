@@ -1,4 +1,4 @@
-# Airline AI Assistant using Tools
+# Multimodal AI assistant integrating Image and Sound generation
 ***
 
 ![Assitant](https://github.com/MihranD/Airline-AI-Assistant/blob/main/images/assistant.png)
