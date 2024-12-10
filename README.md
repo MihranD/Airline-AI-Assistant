@@ -65,18 +65,26 @@ What we actually do is give the LLM the opportunity to inform us that it wants u
 Here's how the new chat function looks:
 
 ```
-def chat(message, history):
-    messages = [{"role": "system", "content": system_message}] + history + [{"role": "user", "content": message}]
+def chat(history):
+    messages = [{"role": "system", "content": system_message}] + history
     response = openai.chat.completions.create(model=MODEL, messages=messages, tools=tools)
-
+    image = None
+    
     if response.choices[0].finish_reason=="tool_calls":
         message = response.choices[0].message
         response, city = handle_tool_call(message)
         messages.append(message)
         messages.append(response)
+        image = artist(city)
         response = openai.chat.completions.create(model=MODEL, messages=messages)
+        
+    reply = response.choices[0].message.content
+    history += [{"role":"assistant", "content":reply}]
+
+    # Comment out or delete the next line if you'd rather skip Audio for now..
+    talker(reply)
     
-    return response.choices[0].message.content
+    return history, image
 ```
 
 We have to write that function handle_tool_call:
@@ -96,8 +104,39 @@ def handle_tool_call(message):
 ```
 
 ```
-gr.ChatInterface(fn=chat, type="messages", js=force_dark_mode).launch()
+# More involved Gradio code as we're not using the preset Chat interface!
+# Passing in inbrowser=True in the last line will cause a Gradio window to pop up immediately.
+
+with gr.Blocks(js=force_dark_mode) as ui:
+    with gr.Row():
+        chatbot = gr.Chatbot(height=500, type="messages")
+        image_output = gr.Image(height=500)
+    with gr.Row():
+        entry = gr.Textbox(label="Chat with our AI Assistant:")
+    with gr.Row():
+        clear = gr.Button("Clear")
+
+    def do_entry(message, history):
+        history += [{"role":"user", "content":message}]
+        return "", history
+
+    entry.submit(do_entry, inputs=[entry, chatbot], outputs=[entry, chatbot]).then(
+        chat, inputs=chatbot, outputs=[chatbot, image_output]
+    )
+    clear.click(lambda: None, inputs=None, outputs=chatbot, queue=False)
+
+ui.launch(inbrowser=True)
 ```
+
+# Our Agent Framework
+
+The term **Agentic AI** and Agentization is an umbrella term that refers to a number of techniques, such as:
+
+1. Breaking a complex problem into smaller steps, with multiple LLMs carrying out specialized tasks
+2. The ability for LLMs to use Tools to give them additional capabilities
+3. The `Agent Environment` which allows Agents to collaborate
+4. An LLM can act as the Planner, dividing bigger tasks into smaller ones for the specialists
+5. The concept of an Agent having autonomy / agency, beyond just responding to a prompt - such as Memory
     
 ![Result](https://github.com/MihranD/Airline-AI-Assistant/blob/main/images/result.png)
 
